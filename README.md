@@ -6,9 +6,9 @@
 
 ## Architecture
 
-Follows the official Google best practises [guide](https://developer.android.com/topic/architecture):
+Follows the official Google best practises [guidelines](https://developer.android.com/topic/architecture):
 
-- **Activity Structure:** Single Activity Architecture
+- **Activity Structure:** Single Activity Architecture (Jetpack Compose Only App)
 - **Design Pattern:** MVVM (Model-View-ViewModel)
 - **Modularization:** 1 Module
 
