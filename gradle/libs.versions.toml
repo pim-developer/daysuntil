@@ -1,0 +1,64 @@
+#https://developer.android.com/build/migrate-to-catalogs#kts
+
+[versions]
+agp = "8.5.1" #androidGradlePlugin
+kotlin = "1.9.0"
+coreKtx = "1.13.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.4"
+activityCompose = "1.9.1"
+composeBom = "2024.06.00" # BOM: automatically adds version to androidx.compose dependencies
+hiltAndroidGradlePlugin = "2.52"
+hiltAndroidCompiler = "2.52"
+hiltAndroid = "2.52"
+hiltNavigationCompose = "1.2.0"
+mongodbRealmKotlin = "1.16.0"
+kotlinXCoroutines = "1.7.0"
+navigationCompose = "2.7.7"
+
+[libraries]
+#==================== Core ====================
+# The ktx library for Android provides Kotlin extensions that make Android development
+# more concise, idiomatic, and pleasant by leveraging Kotlin's features.
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+#==================== Dependency Injection ====================
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
+#==================== Testing ====================
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+#==================== Compose & UI ====================
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+#==================== CoRoutines ====================
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinXCoroutines" }
+
+#==================== Database ====================
+mongodb-realm-kotlin-library-base = { group = "io.realm.kotlin", name = "library-base", version.ref = "mongodbRealmKotlin" }
+
+#==================== Navigation (Compose) ====================
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidGradlePlugin" } # Dependency Injection (Dagger Hilt)
+# TODO migrate kotlin-kapt to this catalog file
+mongodb-realm-kotlin =  { id = "io.realm.kotlin", version.ref = "mongodbRealmKotlin" } # Database (MongoDB NoSQL)

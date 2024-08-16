@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Days Until</string>
+    <string name="app_name_display_large">Days Until</string>
+    <string name="days_appended_label">days</string>
+    <string name="content_description_icon_edit_event_countdown">edit countdown event with name %s</string>
+    <string name="new_countdown_event_title_dialog">New Event</string>
+    <string name="delete_dialog_button_title">Delete</string>
+    <string name="save_dialog_button_title">Save</string>
+    <string name="content_description_close_dialog_button">close dialog</string>
+    <string name="edit_countdown_event_title_dialog">Edit Event</string>
+    <string name="no_events_planned_label_text">Why not plan something worth counting down to?</string>
+    <string name="hours_appended_label">hours</string>
+    <string name="minutes_appended_label">minutes</string>
+    <string name="seconds_appended_label">seconds</string>
+    <string name="less_than_one_day_countdown_text">SOON!</string>
+    <string name="countdown_name_textfield_error_text">What\'s your event called?</string>
+    <string name="countdown_date_textfield_error_text">When\'s the event?</string>
+    <string name="add_new_countdown_event_fab_button_text">+ Add New</string>
+    <string name="started_countdown_text">TODAY!</string>
+    <string name="text_field_countdown_event_name_placeholder_text">type event name…</string>
+</resources>
