@@ -254,6 +254,7 @@ val onCustomColor1ContainerDarkHighContrast = Color(0xFF000000)
 val green1 =  Color(0xFF56AB2F)
 val green2 =  Color(0xFF00FF00)
 val green3 =  Color(0xFFB9FAB9)
+val green4 =  Color(0xFF27F127)
 
 val red1 = Color(0xFFCC203D)
 val red2 = Color(0xFFFFDAD8)

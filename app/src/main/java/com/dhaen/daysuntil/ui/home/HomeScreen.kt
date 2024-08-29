@@ -87,10 +87,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dhaen.daysuntil.R
 import com.dhaen.daysuntil.domain.countdownevent.CountDownEventModel
 import com.dhaen.daysuntil.presentation.home.HomeViewModel
+import com.dhaen.daysuntil.ui.common.ThreeDCard
 import com.dhaen.daysuntil.ui.theme.DaysUntilTheme
+import com.dhaen.daysuntil.ui.theme.errorContainerDark
 import com.dhaen.daysuntil.ui.theme.green1
 import com.dhaen.daysuntil.ui.theme.green2
 import com.dhaen.daysuntil.ui.theme.green3
+import com.dhaen.daysuntil.ui.theme.green4
+import com.dhaen.daysuntil.ui.theme.onCustomColor1Dark
+import com.dhaen.daysuntil.ui.theme.onCustomColor1DarkMediumContrast
+import com.dhaen.daysuntil.ui.theme.onErrorDark
 import com.dhaen.daysuntil.ui.theme.onPrimaryDark
 import com.dhaen.daysuntil.ui.theme.onTertiaryContainerDark
 import com.dhaen.daysuntil.ui.theme.outlineDark
@@ -100,6 +106,8 @@ import com.dhaen.daysuntil.ui.theme.red1
 import com.dhaen.daysuntil.ui.theme.red2
 import com.dhaen.daysuntil.ui.theme.red3
 import com.dhaen.daysuntil.ui.theme.tertiaryContainerDark
+import com.dhaen.daysuntil.ui.theme.tertiaryContainerDarkHighContrast
+import com.dhaen.daysuntil.ui.theme.tertiaryContainerDarkMediumContrast
 import com.dhaen.daysuntil.ui.theme.tertiaryContainerLight
 import com.dhaen.daysuntil.utils.areDatesOnSameDay
 import com.dhaen.daysuntil.utils.convertEpochSecondsToDate
@@ -186,7 +194,7 @@ fun HomeScreen(
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
 
-        Spacer(modifier = Modifier.size(38.dp))
+        Spacer(modifier = Modifier.size(36.dp))
 
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -215,7 +223,7 @@ fun HomeScreen(
             /* no-op */
         }
 
-        Spacer(modifier = Modifier.size(28.dp))
+        Spacer(modifier = Modifier.size(24.dp))
 
         // Single time source to sync all countdowns
         var currentEpochSecondsUTC by remember { mutableLongStateOf(System.currentTimeMillis() / 1000) }
@@ -288,10 +296,10 @@ fun HomeScreen(
                     ) {
                         /* no-op */
                     } else {
-                        Spacer(modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.size(20.dp))
                     }
                 } else {
-                    Spacer(modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.size(20.dp))
                 }
 
             }
@@ -523,7 +531,8 @@ fun NewCountDownEventDialog(
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
 
-                            isNameErrorVisible.value = editCountDownEventState.name.isNullOrEmpty()
+                            isNameErrorVisible.value =
+                                editCountDownEventState.name.isNullOrEmpty()
                             isDateTimeErrorVisible.value =
                                 datePickerState.selectedDateMillis == null
 
@@ -549,6 +558,7 @@ fun NewCountDownEventDialog(
                     }
                 }
             }
+
         }
     }
 }
@@ -643,7 +653,7 @@ private fun CountDownEventBlock(
         if (formattedDateTime.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(start = 8.dp, bottom = 1.dp),
-                text = formattedDateTime,
+                text = "$formattedDateTime",
                 style = MaterialTheme.typography.labelSmall.copy(fontStyle = FontStyle.Italic),
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -651,117 +661,135 @@ private fun CountDownEventBlock(
             VerticalDivider(
                 modifier = Modifier
                     .height(16.dp)
-                    .align(alignment = Alignment.CenterHorizontally),
+                    .align(alignment = Alignment.CenterHorizontally).offset(y = 6.dp),
                 thickness = 2.dp,
                 color = primaryLightMediumContrast// MaterialTheme.colorScheme.onTertiaryContainer
             )
         }
 
-        ElevatedCard {
-            Column(
-                modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surface)
-                    .fillMaxSize()
-                    .padding(bottom = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
 
-                CountDownEventCardHeader(
-                    heading = heading,
-                    headerBackground = headerBackground,
-                    onEditClick = onEditClick
-                )
+        var daysRowModifier: Modifier = Modifier
+            .fillMaxWidth()
+        var textStyle = MaterialTheme.typography.titleMedium
+        var threeDCardShadowColor = Brush.horizontalGradient(
+            colors = listOf(onCustomColor1DarkMediumContrast, onCustomColor1DarkMediumContrast)
+        )
 
-                var daysRowModifier: Modifier = Modifier
-                    .fillMaxWidth()
+        val daysText = if (days <= -1L) {
+            textStyle = MaterialTheme.typography.titleMedium.copy(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(red1, errorContainerDark)
+                ),
+                fontStyle = FontStyle.Italic
+            )
+            threeDCardShadowColor = Brush.horizontalGradient(
+                colors = listOf(errorContainerDark, red1)
+            )
+            "$days ${stringResource(id = R.string.days_appended_label)}"
+        } else if (remainingTimeEpochSecondsUTC < 0) {
+            textStyle = MaterialTheme.typography.titleMedium.copy(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(green4, green1)
+                ),
+                fontStyle = FontStyle.Italic
+            )
+            threeDCardShadowColor = Brush.horizontalGradient(
+                colors = listOf(green1, green4)
+            )
+            stringResource(id = R.string.started_countdown_text)
+        } else if (days == 0L) {
+            textStyle = MaterialTheme.typography.titleMedium.copy(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(tertiaryContainerDarkHighContrast, tertiaryContainerDarkMediumContrast)
+                ),
+                fontStyle = FontStyle.Italic
+            )
+            threeDCardShadowColor = Brush.horizontalGradient(
+                colors = listOf(tertiaryContainerDarkMediumContrast, tertiaryContainerDarkHighContrast)
+            )
+            stringResource(id = R.string.less_than_one_day_countdown_text)
+        } else {
+            "$days ${stringResource(id = R.string.days_appended_label)}"
+        }
 
-                // TODO: refactor, there are redundant branches
-                val daysText = if (days <= -1L) {
-                    daysRowModifier = daysRowModifier
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(red3, red1)
-                            )
-                        )
-                    "$days ${stringResource(id = R.string.days_appended_label)}"
-                } else if (remainingTimeEpochSecondsUTC < 0) {
-                    daysRowModifier = daysRowModifier
-                        .background(
-                            color = tertiaryContainerDark
-                        )
-                    stringResource(id = R.string.started_countdown_text)
-                } else if (days == 0L) {
-                    daysRowModifier = daysRowModifier
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(green2, green1)
-                            )
-                        )
-                    stringResource(id = R.string.less_than_one_day_countdown_text)
-                } else {
-                    "$days ${stringResource(id = R.string.days_appended_label)}"
-                }
+        ThreeDCard(shadowColor = threeDCardShadowColor) {
 
-                val textStyle = if (days <= -1L) {
-                    MaterialTheme.typography.titleMedium.copy(color = red2)
-                } else if (remainingTimeEpochSecondsUTC < 0) {
-                    // STARTED
-                    MaterialTheme.typography.titleMedium.copy(
-                        color = onTertiaryContainerDark,
-                        fontStyle = FontStyle.Italic
-                    )
-                } else if (days == 0L) {
-                    // SOON
-                    MaterialTheme.typography.titleMedium.copy(
-                        color = green3,
-                        fontStyle = FontStyle.Italic
-                    )
-                } else {
-                    MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurface)
-                }
-
-                Row(
-                    modifier = daysRowModifier
-                        .padding(top = 14.dp, bottom = 12.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+            ElevatedCard {
+                Column(
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .fillMaxSize()
+                        .padding(bottom = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = daysText,
-                        style = textStyle,
+
+                    CountDownEventCardHeader(
+                        heading = heading,
+                        headerBackground = headerBackground,
+                        onEditClick = onEditClick
                     )
+
+                    if (days <= -1L) {
+                        MaterialTheme.typography.titleMedium.copy(color = red2)
+                    } else if (remainingTimeEpochSecondsUTC < 0) {
+                        // STARTED
+                        MaterialTheme.typography.titleMedium.copy(
+                            color = onTertiaryContainerDark,
+                            fontStyle = FontStyle.Italic
+                        )
+                    } else if (days == 0L) {
+                        // SOON
+                        MaterialTheme.typography.titleMedium.copy(
+                            color = green3,
+                            fontStyle = FontStyle.Italic
+                        )
+                    } else {
+                        MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurface)
+                    }
+
+                    Row(
+                        modifier = daysRowModifier
+                            .padding(top = 14.dp, bottom = 12.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = daysText,
+                            style = textStyle,
+                        )
+                    }
+
+                    // TODO: fix padding
+
+                    Spacer(modifier = Modifier.size(4.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "$hours ${stringResource(id = R.string.hours_appended_label)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "$minutes ${stringResource(id = R.string.minutes_appended_label)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "$seconds ${stringResource(id = R.string.seconds_appended_label)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.size(16.dp))
                 }
-
-                // TODO: fix padding
-
-                Spacer(modifier = Modifier.size(4.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "$hours ${stringResource(id = R.string.hours_appended_label)}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = "$minutes ${stringResource(id = R.string.minutes_appended_label)}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = "$seconds ${stringResource(id = R.string.seconds_appended_label)}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Spacer(modifier = Modifier.size(16.dp))
             }
         }
     }
@@ -799,10 +827,11 @@ private fun CountDownEventCardHeader(
         )
 
         IconButton(
-            modifier = Modifier.align(Alignment.CenterEnd),
+            modifier = Modifier.align(Alignment.CenterEnd).size(22.dp).offset(x = (-6).dp, y = (-6).dp),
             onClick = onEditClick
         ) {
             Icon(
+                modifier = Modifier.size(22.dp),
                 painter = painterResource(id = R.drawable.edit_24px),
                 contentDescription = stringResource(
                     id = R.string.content_description_icon_edit_event_countdown,
@@ -892,10 +921,10 @@ private fun PreviewNewEventDialog() {
 
 
                 NewCountDownEventDialog(
-                    onDismissRequest = {  },
+                    onDismissRequest = { },
                     editCountDownEventState = HomeViewModel.EditCountDownEventState(),
                     onNameChange = {},
-                    onDeleteClick = {  }) {
+                    onDeleteClick = { }) {
 
                 }
             }
@@ -929,7 +958,7 @@ private fun PreviewNewEventModalDatePickerDialog() {
                     .background(largeRadialGradient)
             ) {
                 NewCountDownEventDialog(
-                    onDismissRequest = {  },
+                    onDismissRequest = { },
                     editCountDownEventState = HomeViewModel.EditCountDownEventState(),
                     onNameChange = {},
                     onDeleteClick = { }) {
