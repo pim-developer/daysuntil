@@ -2,7 +2,7 @@
 
 *Hi!* Days Until is a Modern Android App which displays the *days, hours, minutes, and seconds* till your event ⏳.
 
-![](https://github.com/pim-developer/daysuntil/blob/main/demo_2.gif)
+<img src="https://github.com/pim-developer/daysuntil/blob/main/demo.gif" width="260" height="462.22" />
 
 ## Architecture
 
