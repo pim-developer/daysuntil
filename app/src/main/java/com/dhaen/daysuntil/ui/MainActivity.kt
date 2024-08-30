@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.dhaen.daysuntil.R
 import com.dhaen.daysuntil.ui.home.HomeScreenRoute
 import com.dhaen.daysuntil.ui.theme.DaysUntilTheme
+import com.dhaen.daysuntil.ui.theme.onTertiaryLight
 import com.dhaen.daysuntil.ui.theme.tertiaryContainerLight
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,11 +41,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // see GradientColors in Background.kt
         val statusBarColor = tertiaryContainerLight.toArgb()
+        val navigationBarStyle = onTertiaryLight.toArgb()
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(statusBarColor),
-            navigationBarStyle = SystemBarStyle.dark(statusBarColor),
+            navigationBarStyle = SystemBarStyle.dark(navigationBarStyle),
         )
+
         setContent {
             val (homeScreenFABButtonOnClick, setHomeScreenFABButtonOnClick) = remember {
                 mutableStateOf<(() -> Unit)?>(

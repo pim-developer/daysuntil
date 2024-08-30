@@ -87,6 +87,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dhaen.daysuntil.R
 import com.dhaen.daysuntil.domain.countdownevent.CountDownEventModel
 import com.dhaen.daysuntil.presentation.home.HomeViewModel
+import com.dhaen.daysuntil.ui.common.GradientBackground
 import com.dhaen.daysuntil.ui.common.ThreeDCard
 import com.dhaen.daysuntil.ui.theme.DaysUntilTheme
 import com.dhaen.daysuntil.ui.theme.errorContainerDark
@@ -187,136 +188,139 @@ fun HomeScreen(
             )
         }
     }
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(largeRadialGradient)
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-    ) {
 
-        Spacer(modifier = Modifier.size(36.dp))
-
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = stringResource(id = R.string.app_name_display_large),
-            style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        if (countDownEventsFeed.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .offset(y = -(38.dp + 24.dp)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier,
-                    text = stringResource(id = R.string.no_events_planned_label_text),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
-                )
-            }
-        } else {
-            /* no-op */
-        }
-
-        Spacer(modifier = Modifier.size(24.dp))
-
-        // Single time source to sync all countdowns
-        var currentEpochSecondsUTC by remember { mutableLongStateOf(System.currentTimeMillis() / 1000) }
-
-        // LaunchedEffect to update the current time every second
-        LaunchedEffect(Unit) {
-            while (true) {
-                delay(1000L)
-                currentEpochSecondsUTC = System.currentTimeMillis() / 1000
-            }
-        }
-
-        // TODO: add more attractive backgrounds
-        val headerBackgrounds = listOf(
-            R.drawable.blurry_gradient_haikei,
-            R.drawable.blurry_gradient_haikei_2,
-            R.drawable.blurry_gradient_haikei_3
-        )
-
-        LazyColumn(
+    GradientBackground {
+        Column(
             Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize()
+//            .background(largeRadialGradient)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
         ) {
-            itemsIndexed(
-                items = countDownEventsFeed,
-                key = { _, item -> item.idHexString }) { i, event ->
 
-                val formattedDateTime = if (i - 1 >= 0 &&
-                    areDatesOnSameDay(
-                        countDownEventsFeed[i - 1].dateEpochSecondsUTC,
-                        event.dateEpochSecondsUTC
+            Spacer(modifier = Modifier.size(36.dp))
+
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = stringResource(id = R.string.app_name_display_large),
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            if (countDownEventsFeed.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                        .offset(y = -(38.dp + 24.dp)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = stringResource(id = R.string.no_events_planned_label_text),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center
                     )
-                ) {
-                    ""
-                } else {
-                    convertEpochSecondsToDate(event.dateEpochSecondsUTC)
                 }
+            } else {
+                /* no-op */
+            }
 
-                // Calculate remaining time for each event based on the synced time source
-                val remainingTime = event.dateEpochSecondsUTC - currentEpochSecondsUTC
+            Spacer(modifier = Modifier.size(24.dp))
 
-                // consecutive cards have a different background
-                val headerBackgroundIndex = i % headerBackgrounds.size
+            // Single time source to sync all countdowns
+            var currentEpochSecondsUTC by remember { mutableLongStateOf(System.currentTimeMillis() / 1000) }
 
-                CountDownEventBlock(
-                    modifier = Modifier.animateItemPlacement(),
-                    headerBackground = headerBackgrounds[headerBackgroundIndex],
-                    formattedDateTime = formattedDateTime,
-                    heading = event.name,
-                    emoji = null,
-                    onEditClick = {
-                        onViewCountDownEventClick(
-                            event.idHexString,
-                            event.name,
-                            event.dateEpochSecondsUTC
-                        )
-                        isNewEventDialogVisible.value = true
-                    },
-                    remainingTimeEpochSecondsUTC = remainingTime
-                )
+            // LaunchedEffect to update the current time every second
+            LaunchedEffect(Unit) {
+                while (true) {
+                    delay(1000L)
+                    currentEpochSecondsUTC = System.currentTimeMillis() / 1000
+                }
+            }
 
-                if (
-                    i + 1 < countDownEventsFeed.size
-                ) {
-                    if (areDatesOnSameDay(
-                            countDownEventsFeed[i + 1].dateEpochSecondsUTC,
+            // TODO: add more attractive backgrounds
+            val headerBackgrounds = listOf(
+                R.drawable.blurry_gradient_haikei,
+                R.drawable.blurry_gradient_haikei_2,
+                R.drawable.blurry_gradient_haikei_3
+            )
+
+            LazyColumn(
+                Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                itemsIndexed(
+                    items = countDownEventsFeed,
+                    key = { _, item -> item.idHexString }) { i, event ->
+
+                    val formattedDateTime = if (i - 1 >= 0 &&
+                        areDatesOnSameDay(
+                            countDownEventsFeed[i - 1].dateEpochSecondsUTC,
                             event.dateEpochSecondsUTC
                         )
                     ) {
-                        /* no-op */
+                        ""
+                    } else {
+                        convertEpochSecondsToDate(event.dateEpochSecondsUTC)
+                    }
+
+                    // Calculate remaining time for each event based on the synced time source
+                    val remainingTime = event.dateEpochSecondsUTC - currentEpochSecondsUTC
+
+                    // consecutive cards have a different background
+                    val headerBackgroundIndex = i % headerBackgrounds.size
+
+                    CountDownEventBlock(
+                        modifier = Modifier.animateItemPlacement(),
+                        headerBackground = headerBackgrounds[headerBackgroundIndex],
+                        formattedDateTime = formattedDateTime,
+                        heading = event.name,
+                        emoji = null,
+                        onEditClick = {
+                            onViewCountDownEventClick(
+                                event.idHexString,
+                                event.name,
+                                event.dateEpochSecondsUTC
+                            )
+                            isNewEventDialogVisible.value = true
+                        },
+                        remainingTimeEpochSecondsUTC = remainingTime
+                    )
+
+                    if (
+                        i + 1 < countDownEventsFeed.size
+                    ) {
+                        if (areDatesOnSameDay(
+                                countDownEventsFeed[i + 1].dateEpochSecondsUTC,
+                                event.dateEpochSecondsUTC
+                            )
+                        ) {
+                            /* no-op */
+                        } else {
+                            Spacer(modifier = Modifier.size(20.dp))
+                        }
                     } else {
                         Spacer(modifier = Modifier.size(20.dp))
                     }
-                } else {
-                    Spacer(modifier = Modifier.size(20.dp))
+
                 }
 
             }
 
-        }
-
-        if (isNewEventDialogVisible.value) {
-            NewCountDownEventDialog(
-                onDismissRequest = {
-                    onResetResetEditCountDownEventState()
-                    isNewEventDialogVisible.value = false
-                },
-                editCountDownEventState = editCountDownEventState,
-                onNameChange = onNameChange,
-                onDeleteClick = onDeleteClick,
-                onSaveClick = onSaveClick
-            )
+            if (isNewEventDialogVisible.value) {
+                NewCountDownEventDialog(
+                    onDismissRequest = {
+                        onResetResetEditCountDownEventState()
+                        isNewEventDialogVisible.value = false
+                    },
+                    editCountDownEventState = editCountDownEventState,
+                    onNameChange = onNameChange,
+                    onDeleteClick = onDeleteClick,
+                    onSaveClick = onSaveClick
+                )
+            }
         }
     }
 }
@@ -661,7 +665,8 @@ private fun CountDownEventBlock(
             VerticalDivider(
                 modifier = Modifier
                     .height(16.dp)
-                    .align(alignment = Alignment.CenterHorizontally).offset(y = 6.dp),
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .offset(y = 6.dp),
                 thickness = 2.dp,
                 color = primaryLightMediumContrast// MaterialTheme.colorScheme.onTertiaryContainer
             )
@@ -700,12 +705,18 @@ private fun CountDownEventBlock(
         } else if (days == 0L) {
             textStyle = MaterialTheme.typography.titleMedium.copy(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(tertiaryContainerDarkHighContrast, tertiaryContainerDarkMediumContrast)
+                    colors = listOf(
+                        tertiaryContainerDarkHighContrast,
+                        tertiaryContainerDarkMediumContrast
+                    )
                 ),
                 fontStyle = FontStyle.Italic
             )
             threeDCardShadowColor = Brush.horizontalGradient(
-                colors = listOf(tertiaryContainerDarkMediumContrast, tertiaryContainerDarkHighContrast)
+                colors = listOf(
+                    tertiaryContainerDarkMediumContrast,
+                    tertiaryContainerDarkHighContrast
+                )
             )
             stringResource(id = R.string.less_than_one_day_countdown_text)
         } else {
@@ -827,7 +838,10 @@ private fun CountDownEventCardHeader(
         )
 
         IconButton(
-            modifier = Modifier.align(Alignment.CenterEnd).size(22.dp).offset(x = (-6).dp, y = (-6).dp),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .size(22.dp)
+                .offset(x = (-6).dp, y = (-6).dp),
             onClick = onEditClick
         ) {
             Icon(
