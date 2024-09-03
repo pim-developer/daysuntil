@@ -25,7 +25,7 @@ fun ThreeDCard(modifier: Modifier = Modifier, shadowColor: Brush, content: @Comp
     ) {
         Box(
             modifier = modifier
-                .offset(y = 6.dp, x = 5.dp)
+                .offset(y = 4.dp, x = 4.dp)
                 .fillMaxSize()
                 .background(
                     shape = RoundedCornerShape(12.dp),
